@@ -1,2 +1,2 @@
 # my_blog
-Django
+Django my_blog
