@@ -1,0 +1,9 @@
+<style type="text/css">
+        .home-content{
+            font-size: 300%;
+            position: absolute;
+            left: 40%;
+            top: 40%;
+            transfrom: translate(-50%, -50%);
+        }
+</style>

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    个人博客中心
+{% endblock %}
+
+{% block content %}
+    {# 注释 #}
+    {% for blog in blogs %}
+        <!--注意href从/开始和没有的区别-->
+        <!--<a href="{{ list.id }}"><h3>{{ list.title }}</h3></a>-->
+        <a href="{% url 'blog_detail' blog.pk %}"><span style="font-size:135%;font-weight:bold;">{{ blog.title }}</span></a>
+        <span style="font-size:20px;">{{ blog.content|striptags|truncatechars:7 }}</span>  <!-- truncatechars -->
+        </br>
+    {% empty %}
+        <p>-- 暂无博客 --</p>
+    {% endfor %}
+    <p>
+        <span style="font-size:125%;">分页：</span>
+        {% for i in page_of_blogs.paginator.page_range %}
+            <a href="?page={{ i }}">{{ i }}</a>
+        {% endfor %}
+    </p>
+    <p>
+        <span style="font-size:125%;">博客类别：</span>
+        {% for type in blog_type %}
+            <a href="{% url 'blogs_with_type' type.pk %}">{{ type.type_name }} ({{ type.blog_count }})</a>
+        {% endfor %}
+    </p>
+    <p>
+        <span style="font-size:125%;">日期归档：</span>
+        {% for blog_date,blog_count in blogs_date.items %}
+            <a href="{% url 'blogs_with_date' blog_date.year blog_date.month %}">
+                {{ blog_date|date:"Y年m月" }} ({{ blog_count }})
+            </a>
+        {% endfor %}
+    </p>
+    <h4>一共有{{　blogs|length}}篇博客</h4>  <!-- 过滤器得到blogs的长度 -->
+    <h4>一共有{{　blogs_count }}篇博客</h4>  <!-- 两种方法 -->
+{% endblock %}
+

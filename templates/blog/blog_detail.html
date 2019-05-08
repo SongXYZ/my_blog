@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ blog.title }}
+{% endblock %}
+
+{% block content %}
+    <h3>{{ blog.title }}</h3>
+    <p>作者：{{ blog.author }}</p>
+    <p>发表日期：{{ blog.create_time|date:"Y-m-d H:i:s" }}&nbsp;&nbsp;阅读：({{ blog.get_read_num }})</p>
+    <p>分类：
+        <a href="{% url 'blogs_with_type' blog.blog_type.pk %}">{{ blog.blog_type }}</a>
+    </p>
+    <!--<p>{{ blog.content|striptags }}</p>-->
+    <p>{{ blog.content|safe }}</p>  <!-- safe可以解析HTML标签 -->
+    <p>上一篇：
+        {% if previous_blog %}
+            <a href="{% url 'blog_detail' previous_blog.pk %}">{{ previous_blog.title }}</a>
+        {% else %}
+            没有了
+        {% endif %}
+    </p>
+    <p>下一篇：
+        {% if next_blog %}
+            <a href="{% url 'blog_detail' next_blog.pk %}">{{ next_blog.title }}</a>
+        {% else %}
+            没有了
+        {% endif %}
+    </p>
+    <div>
+        <h3>提交评论</h3>
+        {% if user.is_authenticated %}
+            {{ user.username }},欢迎评论
+            <form action="{% url 'update_comment' %}" method="post">
+                {% csrf_token %}
+                <textarea id="comment_text" name="text"></textarea><br>
+                <input type="hidden" name="object_id" value="{{ blog.pk }}">
+                <input type="hidden" name="content_type" value="blog">
+                <input type="submit" name="提交">
+            </form>
+        {% else %}
+            未登录，登录之后方可评论
+            <a href="{% url 'login' %}?from={{ request.get_full_path }}">登录</a>
+        {% endif %}
+    </div>
+    <div>
+        <h3>评论列表</h3>
+        {% for comment in comments %}
+            <div>
+                {{ comment.user.username }}
+                {{ comment.comment_time|date:"Y-m-d H:i:s" }}
+                {{ comment.text }}
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
+
